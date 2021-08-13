@@ -14,7 +14,7 @@ public class TalentTreeBehaviour : MonoBehaviour
     void Start()
     {
         _treeLevel = 1;
-        skillPoints = 10;
+        skillPoints = 100;
         nodeList = new List<TalentNodeClass>();
         InitializeTree();
     }
@@ -39,6 +39,7 @@ public class TalentTreeBehaviour : MonoBehaviour
         TalentNodeClass newNode = new TalentNodeClass(nodeType, position);
 
         var nodeGameObject = Instantiate(nodePrefab);
+        newNode.SetNodeObj(nodeGameObject);
         nodeGameObject.GetComponent<NodePrefabScript>().SetTalentNodeRef(newNode);
         nodeList.Add(newNode);
 
@@ -51,7 +52,7 @@ public class TalentTreeBehaviour : MonoBehaviour
 
         for (int i = 1; i <= nodeCount; i++)
         {
-            Vector2 nodePosition = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized * (i / 3f);
+            Vector2 nodePosition = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized * i;
             InitializeNode(NodeType.IncreaseAttack, nodePosition);
         }
         InitializeBaseNode();
@@ -61,10 +62,12 @@ public class TalentTreeBehaviour : MonoBehaviour
     {
         TalentNodeClass newNode = new TalentNodeClass(NodeType.Start, Vector2.zero);
         var nodeGameObject = Instantiate(nodePrefab);
+        newNode.SetNodeObj(nodeGameObject);
         nodeGameObject.GetComponent<NodePrefabScript>().SetTalentNodeRef(newNode);
         nodeList.Add(newNode);
         newNode.isUnlocked = true;
         NodeLvlUp(newNode);
+        ChangeNodeColor(newNode);
         nodeGameObject.GetComponent<NodePrefabScript>().UpdateRange(newNode.GetNodeRadius());
     }
 
@@ -73,8 +76,7 @@ public class TalentTreeBehaviour : MonoBehaviour
         /*  
         Checks if the node is within the abailable range
         Checks if there's enough skillpoints to upgrade the node
-        Expands the range within which we can activate nodes
-        Levels up
+        Expands the range within
         */
         int skillPointCost = node.GetSkillPointsCost();
         if (node.isUnlocked && 
@@ -95,7 +97,13 @@ public class TalentTreeBehaviour : MonoBehaviour
             if (Vector2.Distance(node.Position, n.Position) <= node.GetNodeRadius())
             {
                 n.isUnlocked = true;
+                ChangeNodeColor(n);
             }
         });
+    }
+
+    public void ChangeNodeColor(TalentNodeClass node)
+    {
+        node.GetNodeObj().GetComponent<SpriteRenderer>().color = Color.green;
     }
 }

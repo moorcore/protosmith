@@ -9,6 +9,7 @@ public class TalentNodeClass
     public NodeType nodeType { get; set; }
     public int nodeLevel;
     private int _powerMultiplier;
+    private GameObject _nodeObj;
     public Vector2 Position
     {
         get { return _position; }
@@ -19,9 +20,19 @@ public class TalentNodeClass
         }
     }
 
+    public GameObject GetNodeObj() 
+    {
+        return _nodeObj;
+    }
+
+    public void SetNodeObj(GameObject gameObj)
+    {
+        _nodeObj = gameObj;
+    }
+
     public float GetNodeRadius()
     {
-        return nodeLevel == 0 ? 0.01f : nodeLevel;
+        return nodeLevel == 0 ? 0.01f : nodeLevel * 3;
     }
 
     public int GetSkillPointsCost()
